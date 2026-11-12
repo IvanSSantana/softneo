@@ -5,15 +5,31 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter @Setter @NoArgsConstructor
 @Table(name = "transacao")
 public class Transacao {
+
+  public Transacao(
+          Produto produto,
+          Cliente cliente,
+          Vendedor vendedor,
+          Boolean tipo,
+          Integer quantidade,
+          BigDecimal precoUnitario
+          ) {
+      this.produto = produto;
+      this.cliente = cliente;
+      this.vendedor = vendedor;
+      this.tipo = tipo;
+      this.quantidade = quantidade;
+      this.precoUnitario = precoUnitario;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY) // FetchType a ser revisto Lazy ou Eager
   @JoinColumn(name = "produto_id", nullable = false)
@@ -23,7 +39,7 @@ public class Transacao {
   private Boolean tipo;
 
   @Column(nullable = false)
-  private int quantidade = 1;
+  private Integer quantidade = 1;
 
   @Column(name = "preco_unitario", nullable = false, precision = 10, scale = 2)
   private BigDecimal precoUnitario;
