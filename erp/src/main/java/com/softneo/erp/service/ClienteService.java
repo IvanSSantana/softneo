@@ -2,10 +2,12 @@ package com.softneo.erp.service;
 
 import com.softneo.erp.model.Cliente;
 import com.softneo.erp.repository.ClienteRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class ClienteService {
 
   private final ClienteRepository clienteRepository;
