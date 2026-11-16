@@ -1,5 +1,6 @@
 package com.softneo.erp.service;
 
+import com.softneo.erp.dto.ProdutoSaveRequest;
 import com.softneo.erp.model.Produto;
 import com.softneo.erp.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
@@ -28,18 +29,25 @@ public class ProdutoService {
   }
 
   @Transactional
-  public Produto save(Produto produto) {
+  public Produto save(ProdutoSaveRequest produtoRequest) {
+    Produto produto = new Produto();
+
+    produto.setNome(produtoRequest.nome());
+    produto.setDescricao(produtoRequest.descricao());
+    produto.setPreco(produtoRequest.preco());
+    produto.setQuantidade(produtoRequest.quantidade());
+
     return produtoRepository.save(produto);
   }
 
   @Transactional
-  public Produto update(long id, Produto dadosAtualizados) {
+  public Produto update(long id, ProdutoSaveRequest dadosAtualizados) {
     Produto produtoExistente = this.findById(id);
 
-    produtoExistente.setNome(dadosAtualizados.getNome());
-    produtoExistente.setDescricao(dadosAtualizados.getDescricao());
-    produtoExistente.setPreco(dadosAtualizados.getPreco());
-    produtoExistente.setQuantidade(dadosAtualizados.getQuantidade());
+    produtoExistente.setNome(dadosAtualizados.nome());
+    produtoExistente.setDescricao(dadosAtualizados.descricao());
+    produtoExistente.setPreco(dadosAtualizados.preco());
+    produtoExistente.setQuantidade(dadosAtualizados.quantidade());
 
     return produtoRepository.save(produtoExistente);
   }

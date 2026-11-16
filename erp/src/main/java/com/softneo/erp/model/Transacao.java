@@ -17,7 +17,8 @@ public class Transacao {
           Vendedor vendedor,
           Boolean tipo,
           Integer quantidade,
-          BigDecimal precoUnitario
+          BigDecimal precoUnitario,
+          Instant dataTransacao
           ) {
       this.produto = produto;
       this.cliente = cliente;
@@ -25,6 +26,7 @@ public class Transacao {
       this.tipo = tipo;
       this.quantidade = quantidade;
       this.precoUnitario = precoUnitario;
+      this.dataTransacao = dataTransacao;
   }
 
   @Id
@@ -45,13 +47,13 @@ public class Transacao {
   private BigDecimal precoUnitario;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "cliente_id")
+  @JoinColumn(name = "cliente_id", nullable = false)
   private Cliente cliente;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vendedor_id")
+  @JoinColumn(name = "vendedor_id", nullable = false)
   private Vendedor vendedor;
 
-  @Column(name = "data_transacao", nullable = false, insertable = false, updatable = false)
+  @Column(name = "data_transacao", nullable = false, updatable = false)
   private Instant dataTransacao;
 }

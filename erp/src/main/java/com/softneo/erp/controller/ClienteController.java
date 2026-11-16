@@ -1,5 +1,6 @@
 package com.softneo.erp.controller;
 
+import com.softneo.erp.dto.ClienteSaveRequest;
 import com.softneo.erp.model.Cliente;
 import com.softneo.erp.service.ClienteService;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = {
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+})
 @RestController
 @RequestMapping("/api/v1/clientes")
 public class ClienteController {
@@ -28,14 +33,20 @@ public class ClienteController {
     return ResponseEntity.ok(cliente);
   }
 
+  @GetMapping("/{nome}")
+  public ResponseEntity<Cliente> findByNome(@PathVariable String nome) {
+    Cliente cliente = clienteService.findByNome(nome);
+    return ResponseEntity.ok(cliente);
+  }
+
   @PostMapping
-  public ResponseEntity<Cliente> create(@RequestBody Cliente student) {
+  public ResponseEntity<Cliente> create(@RequestBody ClienteSaveRequest student) {
     Cliente novoCliente = clienteService.save(student);
     return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente student) {
+  public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody ClienteSaveRequest student) {
     Cliente clienteAtualizado = clienteService.update(id, student);
     return ResponseEntity.ok(clienteAtualizado);
   }

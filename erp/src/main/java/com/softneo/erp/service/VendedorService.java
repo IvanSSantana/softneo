@@ -1,5 +1,6 @@
 package com.softneo.erp.service;
 
+import com.softneo.erp.dto.VendedorSaveRequest;
 import com.softneo.erp.model.Vendedor;
 import com.softneo.erp.repository.VendedorRepository;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,19 @@ public class VendedorService {
   }
 
   @Transactional
-  public Vendedor save(Vendedor vendedor) {
+  public Vendedor save(VendedorSaveRequest vendedorRequest) {
+    Vendedor vendedor = new Vendedor();
+
+    vendedor.setNome(vendedorRequest.nome());
+
     return vendedorRepository.save(vendedor);
   }
 
   @Transactional
-  public Vendedor update(long id, Vendedor dadosAtualizados) {
+  public Vendedor update(long id, VendedorSaveRequest dadosAtualizados) {
     Vendedor vendedorExistente = this.findById(id);
 
-    vendedorExistente.setNome(dadosAtualizados.getNome());
+    vendedorExistente.setNome(dadosAtualizados.nome());
 
     return vendedorRepository.save(vendedorExistente);
   }

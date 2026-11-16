@@ -11,6 +11,7 @@ import com.softneo.erp.repository.TransacaoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -59,7 +60,8 @@ public class TransacaoService {
             vendedor,
             transacaoRequest.tipo(),
             transacaoRequest.quantidade(),
-            transacaoRequest.precoUnitario()
+            transacaoRequest.precoUnitario(),
+            Instant.now()
     );
 
     return transacaoRepository.save(transacao);
