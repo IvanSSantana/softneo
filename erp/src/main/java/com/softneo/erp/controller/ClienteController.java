@@ -3,6 +3,7 @@ package com.softneo.erp.controller;
 import com.softneo.erp.dto.ClienteSaveRequest;
 import com.softneo.erp.model.Cliente;
 import com.softneo.erp.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,20 +34,20 @@ public class ClienteController {
     return ResponseEntity.ok(cliente);
   }
 
-  @GetMapping("/{nome}")
+  @GetMapping("/nome/{nome}")
   public ResponseEntity<Cliente> findByNome(@PathVariable String nome) {
     Cliente cliente = clienteService.findByNome(nome);
     return ResponseEntity.ok(cliente);
   }
 
   @PostMapping
-  public ResponseEntity<Cliente> create(@RequestBody ClienteSaveRequest student) {
+  public ResponseEntity<Cliente> create(@Valid @RequestBody ClienteSaveRequest student) {
     Cliente novoCliente = clienteService.save(student);
     return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody ClienteSaveRequest student) {
+  public ResponseEntity<Cliente> update(@Valid @PathVariable Long id, @RequestBody ClienteSaveRequest student) {
     Cliente clienteAtualizado = clienteService.update(id, student);
     return ResponseEntity.ok(clienteAtualizado);
   }

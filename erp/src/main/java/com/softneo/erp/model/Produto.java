@@ -3,6 +3,8 @@ package com.softneo.erp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Table(name = "produto")
@@ -18,7 +20,7 @@ public class Produto {
   private String descricao;
 
   @Column(nullable = false, precision = 10, scale = 2)
-  private String preco;
+  private BigDecimal preco;
 
   @Column(nullable = false)
   private int quantidade = 0;

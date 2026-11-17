@@ -3,6 +3,7 @@ package com.softneo.erp.controller;
 import com.softneo.erp.dto.ProdutoSaveRequest;
 import com.softneo.erp.model.Produto;
 import com.softneo.erp.service.ProdutoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ProdutoController {
   }
 
   @PostMapping
-  public ResponseEntity<Produto> create(@RequestBody ProdutoSaveRequest produto) {
+  public ResponseEntity<Produto> create(@Valid @RequestBody ProdutoSaveRequest produto) {
     Produto novoProduto = produtoService.save(produto);
 
     return ResponseEntity
@@ -43,7 +44,7 @@ public class ProdutoController {
   @PutMapping("/{id}")
   public ResponseEntity<Produto> update(
           @PathVariable Long id,
-          @RequestBody ProdutoSaveRequest produto
+          @Valid @RequestBody ProdutoSaveRequest produto
   ) {
     Produto produtoAtualizado = produtoService.update(id, produto);
     return ResponseEntity.ok(produtoAtualizado);

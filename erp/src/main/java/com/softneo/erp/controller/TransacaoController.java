@@ -4,6 +4,7 @@ import com.softneo.erp.dto.TransacaoSaveRequest;
 import com.softneo.erp.model.Transacao;
 import com.softneo.erp.service.TransacaoService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class TransacaoController {
 
     @PostMapping
     public ResponseEntity<Transacao> create(
-            @RequestBody TransacaoSaveRequest transacaoRequest
+            @Valid @RequestBody TransacaoSaveRequest transacaoRequest
     ) {
         Transacao novaTransacao = transacaoService.save(transacaoRequest);
 
@@ -46,7 +47,7 @@ public class TransacaoController {
     @PutMapping("/{id}")
     public ResponseEntity<Transacao> update(
             @PathVariable Long id,
-            @RequestBody TransacaoSaveRequest transacaoRequest
+            @Valid  @RequestBody TransacaoSaveRequest transacaoRequest
     ) {
         Transacao transacaoAtualizada =
                 transacaoService.update(id, transacaoRequest);

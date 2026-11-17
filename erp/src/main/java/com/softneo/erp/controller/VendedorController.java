@@ -3,6 +3,7 @@ package com.softneo.erp.controller;
 import com.softneo.erp.dto.VendedorSaveRequest;
 import com.softneo.erp.model.Vendedor;
 import com.softneo.erp.service.VendedorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class VendedorController {
   }
 
   @PostMapping
-  public ResponseEntity<Vendedor> create(@RequestBody VendedorSaveRequest vendedor) {
+  public ResponseEntity<Vendedor> create(@Valid @RequestBody VendedorSaveRequest vendedor) {
     Vendedor novoVendedor = vendedorService.save(vendedor);
 
     return ResponseEntity
@@ -43,7 +44,7 @@ public class VendedorController {
   @PutMapping("/{id}")
   public ResponseEntity<Vendedor> update(
           @PathVariable Long id,
-          @RequestBody VendedorSaveRequest vendedor
+          @Valid  @RequestBody VendedorSaveRequest vendedor
   ) {
     Vendedor vendedorAtualizado = vendedorService.update(id, vendedor);
     return ResponseEntity.ok(vendedorAtualizado);
