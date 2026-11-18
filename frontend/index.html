@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interface do mini ERP SoftNeo para gerenciamento de estoque e vendas.">
+  <link rel="stylesheet" href="./styles.css">
+  <title>SoftNeo ERP</title>
+  <script type="module" src="./app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>SoftNeo ERP</h1>
+  </header>
+
+  <div>
+    <aside aria-label="Navegação principal">
+      <nav>
+        <ul>
+          <li>
+            <button
+              type="button"
+              data-view-target="estoque"
+              aria-controls="view-estoque"
+              aria-current="page"
+            >
+              Estoque
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              data-view-target="venda"
+              aria-controls="view-venda"
+            >
+              Venda
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main id="conteudo-principal">
+      <section id="view-estoque" aria-labelledby="titulo-estoque">
+        <header>
+          <h2 id="titulo-estoque">Estoque</h2>
+          <button type="button" id="btn-novo-produto">Cadastrar produto</button>
+        </header>
+
+        <form id="produto-form" hidden>
+          <h3 id="produto-form-titulo">Novo produto</h3>
+          <input type="hidden" id="produto-id" name="id">
+
+          <div>
+            <label for="produto-nome">Nome</label>
+            <input
+              type="text"
+              id="produto-nome"
+              name="nome"
+              maxlength="100"
+              required
+            >
+          </div>
+
+          <div>
+            <label for="produto-descricao">Descrição</label>
+            <textarea
+              id="produto-descricao"
+              name="descricao"
+              maxlength="255"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="produto-preco">Preço</label>
+            <input
+              type="number"
+              id="produto-preco"
+              name="preco"
+              min="0.01"
+              step="0.01"
+              required
+            >
+          </div>
+
+          <div>
+            <label for="produto-quantidade">Quantidade</label>
+            <input
+              type="number"
+              id="produto-quantidade"
+              name="quantidade"
+              min="0"
+              step="1"
+              required
+            >
+          </div>
+
+          <button type="submit">Salvar produto</button>
+          <button type="button" id="btn-cancelar-produto">Cancelar</button>
+        </form>
+
+        <form id="produto-pesquisa-form" role="search">
+          <label for="produto-pesquisa">Pesquisar produto pelo nome</label>
+          <input
+            type="search"
+            id="produto-pesquisa"
+            name="nome"
+            placeholder="Digite o nome do produto"
+          >
+          <button type="submit">Pesquisar</button>
+          <button type="button" id="btn-limpar-pesquisa">Limpar</button>
+        </form>
+
+        <p id="produto-status" role="status" aria-live="polite"></p>
+
+        <div>
+          <table>
+            <caption>Produtos cadastrados no estoque</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Total em estoque</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="produtos-tbody">
+              <tr>
+                <td colspan="7">Carregando produtos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-venda" aria-labelledby="titulo-venda" hidden>
+        <header>
+          <h2 id="titulo-venda">Venda / Transações</h2>
+        </header>
+
+        <section aria-labelledby="titulo-nova-transacao">
+          <h3 id="titulo-nova-transacao">Registrar transação</h3>
+
+          <form id="transacao-form">
+            <input type="hidden" id="transacao-id" name="id">
+
+            <div>
+              <label for="transacao-produto">Produto</label>
+              <select id="transacao-produto" name="produtoId" required>
+                <option value="">Selecione um produto</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="transacao-cliente">Cliente</label>
+              <select id="transacao-cliente" name="clienteId" required>
+                <option value="">Selecione um cliente</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="transacao-vendedor">Vendedor</label>
+              <select id="transacao-vendedor" name="vendedorId" required>
+                <option value="">Selecione um vendedor</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="transacao-tipo">Tipo da transação</label>
+              <select id="transacao-tipo" name="tipo" required>
+                <option value="">Selecione o tipo</option>
+                <option value="true">Venda</option>
+                <option value="false">Compra</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="transacao-quantidade">Quantidade</label>
+              <input
+                type="number"
+                id="transacao-quantidade"
+                name="quantidade"
+                min="1"
+                value="1"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="transacao-preco-unitario">Preço unitário</label>
+              <input
+                type="number"
+                id="transacao-preco-unitario"
+                name="precoUnitario"
+                min="0.01"
+                step="0.01"
+                required
+              >
+            </div>
+
+            <p id="transacao-total">Total: R$ 0,00</p>
+
+            <button type="submit">Salvar transação</button>
+            <button type="button" id="btn-cancelar-transacao" hidden>Cancelar edição</button>
+          </form>
+
+          <p id="transacao-status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section aria-labelledby="titulo-transacoes">
+          <h3 id="titulo-transacoes">Transações cadastradas</h3>
+          <table>
+            <caption>Histórico de transações</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Vendedor</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Preço unitário</th>
+                <th scope="col">Total</th>
+                <th scope="col">Data</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="transacoes-tbody">
+              <tr>
+                <td colspan="10">Carregando transações...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section aria-labelledby="titulo-cadastros-auxiliares">
+          <h3 id="titulo-cadastros-auxiliares">Cadastros auxiliares</h3>
+
+          <details>
+            <summary>Gerenciar clientes</summary>
+            <form id="cliente-form">
+              <input type="hidden" id="cliente-id" name="id">
+              <label for="cliente-nome">Nome do cliente</label>
+              <input type="text" id="cliente-nome" name="nome" maxlength="100" required>
+              <button type="submit">Salvar cliente</button>
+              <button type="button" id="btn-cancelar-cliente" hidden>Cancelar edição</button>
+            </form>
+            <p id="cliente-status" role="status" aria-live="polite"></p>
+            <table>
+              <caption>Clientes cadastrados</caption>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="clientes-tbody">
+                <tr><td colspan="3">Carregando clientes...</td></tr>
+              </tbody>
+            </table>
+          </details>
+
+          <details>
+            <summary>Gerenciar vendedores</summary>
+            <form id="vendedor-form">
+              <input type="hidden" id="vendedor-id" name="id">
+              <label for="vendedor-nome">Nome do vendedor</label>
+              <input type="text" id="vendedor-nome" name="nome" maxlength="100" required>
+              <button type="submit">Salvar vendedor</button>
+              <button type="button" id="btn-cancelar-vendedor" hidden>Cancelar edição</button>
+            </form>
+            <p id="vendedor-status" role="status" aria-live="polite"></p>
+            <table>
+              <caption>Vendedores cadastrados</caption>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="vendedores-tbody">
+                <tr><td colspan="3">Carregando vendedores...</td></tr>
+              </tbody>
+            </table>
+          </details>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

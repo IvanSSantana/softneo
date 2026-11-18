@@ -1,0 +1,707 @@
+/* --------------------------------------------------------------------------
+   SoftNeo ERP — identidade visual baseada no protótipo enviado.
+   Paleta: laranja, preto, branco e cinza.
+   -------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #111;
+  background: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --brand-orange: #ffa01e;
+  --brand-orange-dark: #c77b08;
+  --ink: #181818;
+  --surface: #fff;
+  --surface-muted: #d9d9d9;
+  --border: #151515;
+  --radius-large: 18px;
+  --radius-medium: 10px;
+  --shadow: 0 2px 0 rgb(0 0 0 / 12%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--surface);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+/* O cabeçalho laranja ocupa toda a largura, como no protótipo. */
+body > header {
+  min-height: 185px;
+  display: flex;
+  align-items: center;
+  padding: 18px 28px;
+  background: var(--brand-orange);
+}
+
+body > header h1 {
+  margin: 0;
+  color: #050505;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.6rem, 5.4vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.075em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgb(0 0 0 / 12%);
+}
+
+/* Coluna lateral escura + conteúdo principal branco. */
+body > div {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  min-height: calc(100vh - 185px);
+}
+
+body > div > aside {
+  min-width: 0;
+  padding: 12px;
+  background: var(--ink);
+}
+
+body > div > aside nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body > div > aside nav li {
+  margin: 0;
+  padding: 0;
+}
+
+body > div > aside nav button {
+  width: 100%;
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding: 10px 18px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-medium);
+  background: var(--brand-orange-dark);
+  color: #050505;
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  font-weight: 700;
+  text-align: left;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+
+body > div > aside nav button::before {
+  width: 88px;
+  flex: 0 0 88px;
+  color: #050505;
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+}
+
+body > div > aside nav button[data-view-target="estoque"]::before {
+  content: "▣";
+}
+
+body > div > aside nav button[data-view-target="venda"]::before {
+  content: "◉";
+}
+
+body > div > aside nav button[aria-current="page"] {
+  background: var(--brand-orange);
+}
+
+body > div > aside nav button:hover {
+  filter: brightness(1.06);
+}
+
+body > div > aside nav button:active {
+  transform: translateY(1px);
+}
+
+main {
+  min-width: 0;
+  padding: 26px 28px 40px;
+  background: var(--surface);
+}
+
+main > section {
+  min-width: 0;
+}
+
+/* A pesquisa fica na mesma faixa do botão principal em telas maiores. */
+#view-estoque {
+  display: grid;
+  grid-template-columns: minmax(260px, 396px) minmax(0, 1fr);
+  column-gap: 18px;
+}
+
+h2,
+h3 {
+  color: #080808;
+  line-height: 1.2;
+}
+
+h2 {
+  margin: 0 0 20px;
+  font-size: clamp(1.6rem, 2.3vw, 2rem);
+}
+
+h3 {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+}
+
+/* Estoque: botão de cadastro cinza com o sinal de mais à direita. */
+#view-estoque > header {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 26px;
+}
+
+#view-estoque > header h2 {
+  display: none;
+}
+
+#btn-novo-produto {
+  width: min(396px, 100%);
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 4px 20px;
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface-muted);
+  color: #080808;
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(1.1rem, 1.8vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  box-shadow: var(--shadow);
+}
+
+#btn-novo-produto::after {
+  content: "+";
+  font-size: 2.3rem;
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+#btn-novo-produto:hover {
+  background: #e5e5e5;
+}
+
+/* Pesquisa de produtos, mantida compacta para não competir com a tabela. */
+#produto-pesquisa-form {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0 0 26px;
+}
+
+#produto-form,
+#produto-status,
+#view-estoque > div {
+  grid-column: 1 / -1;
+}
+
+#produto-pesquisa-form label {
+  margin-right: auto;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* Formulários e campos. */
+form:not(#produto-pesquisa-form) {
+  margin: 0 0 20px;
+}
+
+#produto-form,
+#transacao-form,
+#cliente-form,
+#vendedor-form {
+  padding: 20px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-large);
+  background: #f1f1f1;
+  box-shadow: var(--shadow);
+}
+
+#produto-form:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  margin-bottom: 20px;
+}
+
+#produto-form h3 {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+#produto-form > div,
+#transacao-form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+label {
+  display: inline-block;
+  color: #111;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 43px;
+  padding: 9px 11px;
+  border: 1.5px solid #333;
+  border-radius: 7px;
+  background: #fff;
+  color: #111;
+  font: inherit;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+input::placeholder {
+  color: #777;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #a85f00;
+  outline: 3px solid rgb(255 160 30 / 28%);
+  outline-offset: 1px;
+}
+
+small {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+button {
+  font-family: inherit;
+}
+
+form button,
+td button {
+  min-height: 36px;
+  padding: 7px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  background: var(--brand-orange);
+  color: #111;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: filter 140ms ease, transform 140ms ease;
+}
+
+form button:hover,
+td button:hover {
+  filter: brightness(0.95);
+}
+
+form button:active,
+td button:active {
+  transform: translateY(1px);
+}
+
+#produto-form button[type="submit"],
+#transacao-form button[type="submit"],
+#cliente-form button[type="submit"],
+#vendedor-form button[type="submit"] {
+  justify-self: start;
+}
+
+#produto-pesquisa-form input {
+  width: min(300px, 100%);
+}
+
+#produto-pesquisa-form button:last-child,
+#btn-cancelar-produto,
+#btn-cancelar-transacao,
+#btn-cancelar-cliente,
+#btn-cancelar-vendedor {
+  background: #e3e3e3;
+}
+
+/* Mensagens de retorno da API. */
+[role="status"] {
+  margin: 10px 0;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+[role="status"]:empty {
+  display: none;
+}
+
+/* Tabelas: cabeçalho laranja, corpo cinza e contorno preto arredondado. */
+main > section > div:has(> table) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 760px;
+  border: 2px solid var(--border);
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: var(--radius-large);
+  background: var(--surface-muted);
+  overflow: hidden;
+  table-layout: auto;
+}
+
+caption {
+  padding: 0 0 8px;
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+thead th {
+  padding: 13px 15px;
+  border-right: 1.5px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  background: var(--brand-orange);
+  color: #080808;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+thead th:last-child {
+  border-right: 0;
+}
+
+tbody td {
+  min-height: 54px;
+  padding: 13px 15px;
+  border-right: 1.5px solid var(--border);
+  border-bottom: 1.5px solid var(--border);
+  background: var(--surface-muted);
+  vertical-align: middle;
+}
+
+tbody td:last-child {
+  border-right: 0;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover td {
+  background: #e5e5e5;
+}
+
+tbody td[colspan] {
+  padding: 22px;
+  color: #555;
+  text-align: center;
+}
+
+td button + button {
+  margin-left: 6px;
+}
+
+/* Venda e transações. */
+#view-venda > header {
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--border);
+}
+
+#view-venda > header h2 {
+  margin: 0;
+}
+
+#view-venda > section {
+  margin-bottom: 28px;
+}
+
+#view-venda > section > h3 {
+  padding: 10px 14px;
+  border-left: 7px solid var(--brand-orange);
+  background: #f0f0f0;
+}
+
+#transacao-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 15px 18px;
+}
+
+#transacao-form > p,
+#transacao-form > button {
+  align-self: end;
+}
+
+#transacao-total {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  padding: 12px 14px;
+  border-radius: 7px;
+  background: var(--surface-muted);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+#transacao-form button {
+  justify-self: start;
+}
+
+#view-venda section > table {
+  margin-bottom: 20px;
+}
+
+/* Cadastros auxiliares: blocos expansíveis. */
+#view-venda details {
+  margin: 12px 0;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-medium);
+  background: #f1f1f1;
+  overflow: hidden;
+}
+
+#view-venda summary {
+  padding: 13px 16px;
+  background: var(--surface-muted);
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+#view-venda details[open] summary {
+  border-bottom: 1.5px solid var(--border);
+  background: var(--brand-orange);
+}
+
+#view-venda details form,
+#view-venda details > p,
+#view-venda details > table {
+  margin: 14px;
+}
+
+#view-venda details form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+}
+
+#view-venda details form label {
+  flex-basis: 100%;
+}
+
+#view-venda details form input {
+  width: min(440px, 100%);
+}
+
+#view-venda details > table {
+  width: calc(100% - 28px);
+  min-width: 520px;
+}
+
+footer {
+  padding: 12px 20px;
+  background: var(--ink);
+  color: #eee;
+  text-align: center;
+}
+
+footer p {
+  margin: 0;
+}
+
+/* hidden precisa prevalecer sobre regras de display dos formulários. */
+[hidden] {
+  display: none !important;
+}
+
+button:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #7a4300;
+  outline-offset: 3px;
+}
+
+/* Adaptação para tablets e celulares. */
+@media (max-width: 900px) {
+  body > header {
+    min-height: 130px;
+  }
+
+  body > div {
+    grid-template-columns: 230px minmax(0, 1fr);
+    min-height: calc(100vh - 130px);
+  }
+
+  body > div > aside nav button {
+    min-height: 72px;
+    gap: 8px;
+    padding: 9px;
+    font-size: 1.35rem;
+  }
+
+  body > div > aside nav button::before {
+    width: 58px;
+    flex-basis: 58px;
+    font-size: 2.6rem;
+  }
+
+  main {
+    padding: 22px 18px 32px;
+  }
+
+  #transacao-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  body > header {
+    min-height: 104px;
+    padding: 16px 18px;
+  }
+
+  body > header h1 {
+    font-size: 2.6rem;
+  }
+
+  body > div {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 104px);
+  }
+
+  body > div > aside {
+    padding: 9px;
+  }
+
+  body > div > aside nav ul {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  body > div > aside nav li {
+    flex: 1;
+    min-width: 0;
+  }
+
+  body > div > aside nav button {
+    min-height: 58px;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px;
+    font-size: 1.05rem;
+  }
+
+  body > div > aside nav button::before {
+    width: auto;
+    flex: 0 0 auto;
+    font-size: 1.5rem;
+  }
+
+  main {
+    padding: 20px 12px 28px;
+  }
+
+  #view-estoque {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #view-estoque > header {
+    grid-column: 1;
+    grid-row: auto;
+    margin-bottom: 18px;
+  }
+
+  #btn-novo-produto {
+    width: 100%;
+    min-height: 44px;
+    font-size: 1.15rem;
+  }
+
+  #produto-pesquisa-form {
+    grid-column: 1;
+    grid-row: auto;
+    justify-content: stretch;
+    margin: 0 0 18px;
+  }
+
+  #produto-pesquisa-form label {
+    flex-basis: 100%;
+  }
+
+  #produto-pesquisa-form input {
+    flex: 1 1 180px;
+    width: auto;
+  }
+
+  #produto-form:not([hidden]),
+  #transacao-form {
+    grid-template-columns: 1fr;
+  }
+
+  #produto-form h3,
+  #transacao-total {
+    grid-column: auto;
+  }
+
+  #transacao-form > button {
+    align-self: start;
+  }
+
+  #view-venda details form {
+    align-items: stretch;
+  }
+
+  #view-venda details form input {
+    width: 100%;
+  }
+}
