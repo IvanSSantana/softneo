@@ -1,6 +1,6 @@
 package com.softneo.erp.controller;
 
-import com.softneo.erp.dto.TransacaoSaveRequest;
+import com.softneo.erp.dto.requests.TransacaoSaveRequest;
 import com.softneo.erp.model.Transacao;
 import com.softneo.erp.service.TransacaoService;
 

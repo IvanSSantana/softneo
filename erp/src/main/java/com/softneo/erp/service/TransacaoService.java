@@ -1,6 +1,7 @@
 package com.softneo.erp.service;
 
-import com.softneo.erp.dto.TransacaoSaveRequest;
+import com.softneo.erp.dto.requests.TransacaoSaveRequest;
+import com.softneo.erp.dto.responses.ProdutoResponse;
 import com.softneo.erp.model.Cliente;
 import com.softneo.erp.model.Produto;
 import com.softneo.erp.model.Transacao;
@@ -50,7 +51,7 @@ public class TransacaoService {
 
     this.validarDados(transacaoRequest);
 
-    Produto produto = produtoService.findById(transacaoRequest.produtoId());
+    Produto produto = produtoService.findEntityById(transacaoRequest.produtoId());
     Cliente cliente = clienteService.findById(transacaoRequest.clienteId());
     Vendedor vendedor = vendedorService.findById(transacaoRequest.vendedorId());
 
@@ -74,7 +75,7 @@ public class TransacaoService {
 
     Transacao transacaoExistente = this.findById(id);
 
-    Produto produto = produtoService.findById(dadosAtualizados.produtoId());
+    Produto produto = produtoService.findEntityById(dadosAtualizados.produtoId());
     Cliente cliente = clienteService.findById(dadosAtualizados.clienteId());
     Vendedor vendedor = vendedorService.findById(dadosAtualizados.vendedorId());
 

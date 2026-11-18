@@ -1,6 +1,6 @@
 package com.softneo.erp.controller;
 
-import com.softneo.erp.dto.ClienteSaveRequest;
+import com.softneo.erp.dto.requests.ClienteSaveRequest;
 import com.softneo.erp.model.Cliente;
 import com.softneo.erp.service.ClienteService;
 import jakarta.validation.Valid;
@@ -31,12 +31,6 @@ public class ClienteController {
   @GetMapping("/{id}")
   public ResponseEntity<Cliente> findById(@PathVariable long id) {
     Cliente cliente = clienteService.findById(id);
-    return ResponseEntity.ok(cliente);
-  }
-
-  @GetMapping("/nome/{nome}")
-  public ResponseEntity<Cliente> findByNome(@PathVariable String nome) {
-    Cliente cliente = clienteService.findByNome(nome);
     return ResponseEntity.ok(cliente);
   }
 

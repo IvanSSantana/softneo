@@ -8,6 +8,4 @@ import java.util.List;
 
 @Repository
 public interface VendedorRepository extends JpaRepository<Vendedor, Long> {
-
-  List<Vendedor> findByNomeContainingIgnoreCase(String nome);
 }

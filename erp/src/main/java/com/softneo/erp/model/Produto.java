@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
+import java.util.regex.Pattern;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -16,6 +18,25 @@ public class Produto {
   @Column(nullable = false, length = 100)
   private String nome;
 
+  @Column(name = "nome_normalizado", nullable = false)
+  private String nomeNormalizado;
+
+  @PrePersist
+  @PreUpdate
+  public void atualizarCamposNormalizados() {
+      this.nomeNormalizado = normalizar(this.nome);
+  }
+
+  private String normalizar(String texto) {
+    String nomeNormalizado = Normalizer.normalize(texto, Normalizer.Form.NFD);
+
+    Pattern pattern = Pattern.compile("\\p{M}+");
+    return pattern.matcher(nomeNormalizado)
+            .replaceAll("")
+            .toUpperCase()
+            .trim();
+  }
+
   @Column(nullable = true, length = 255)
   private String descricao;
 
@@ -23,5 +44,5 @@ public class Produto {
   private BigDecimal preco;
 
   @Column(nullable = false)
-  private int quantidade = 0;
+  private Integer quantidade = 0;
 }

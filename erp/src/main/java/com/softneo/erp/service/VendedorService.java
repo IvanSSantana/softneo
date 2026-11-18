@@ -1,6 +1,6 @@
 package com.softneo.erp.service;
 
-import com.softneo.erp.dto.VendedorSaveRequest;
+import com.softneo.erp.dto.requests.VendedorSaveRequest;
 import com.softneo.erp.model.Vendedor;
 import com.softneo.erp.repository.VendedorRepository;
 import org.springframework.stereotype.Service;

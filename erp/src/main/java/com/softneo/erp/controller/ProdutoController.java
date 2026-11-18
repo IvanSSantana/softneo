@@ -1,6 +1,7 @@
 package com.softneo.erp.controller;
 
-import com.softneo.erp.dto.ProdutoSaveRequest;
+import com.softneo.erp.dto.requests.ProdutoSaveRequest;
+import com.softneo.erp.dto.responses.ProdutoResponse;
 import com.softneo.erp.model.Produto;
 import com.softneo.erp.service.ProdutoService;
 import jakarta.validation.Valid;
@@ -21,20 +22,29 @@ public class ProdutoController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Produto>> findAll() {
-    List<Produto> produtos = produtoService.findAll();
+  public ResponseEntity<List<ProdutoResponse>> findAll(
+          @RequestParam(required = false) String nome
+  ) {
+    if (nome != null) {
+      List<ProdutoResponse> produtos = produtoService.findByNome(nome);
+
+      if (produtos == null) return ResponseEntity.notFound().build();
+      return ResponseEntity.ok(produtos);
+    }
+
+    List<ProdutoResponse> produtos = produtoService.findAll();
     return ResponseEntity.ok(produtos);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Produto> findById(@PathVariable long id) {
-    Produto produto = produtoService.findById(id);
+  public ResponseEntity<ProdutoResponse> findById(@PathVariable long id) {
+    ProdutoResponse produto = produtoService.findById(id);
     return ResponseEntity.ok(produto);
   }
 
   @PostMapping
-  public ResponseEntity<Produto> create(@Valid @RequestBody ProdutoSaveRequest produto) {
-    Produto novoProduto = produtoService.save(produto);
+  public ResponseEntity<ProdutoResponse> create(@Valid @RequestBody ProdutoSaveRequest produto) {
+    ProdutoResponse novoProduto = produtoService.save(produto);
 
     return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -42,11 +52,11 @@ public class ProdutoController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Produto> update(
+  public ResponseEntity<ProdutoResponse> update(
           @PathVariable Long id,
           @Valid @RequestBody ProdutoSaveRequest produto
   ) {
-    Produto produtoAtualizado = produtoService.update(id, produto);
+    ProdutoResponse produtoAtualizado = produtoService.update(id, produto);
     return ResponseEntity.ok(produtoAtualizado);
   }
 

@@ -1,6 +1,6 @@
 package com.softneo.erp.service;
 
-import com.softneo.erp.dto.ClienteSaveRequest;
+import com.softneo.erp.dto.requests.ClienteSaveRequest;
 import com.softneo.erp.model.Cliente;
 import com.softneo.erp.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -24,11 +24,6 @@ public class ClienteService {
   public Cliente findById(long id) {
     return clienteRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o ID: " + id ));
-  }
-
-  public Cliente findByNome(String nome) {
-    return clienteRepository.findByNome(nome)
-            .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o nome: " + nome ));
   }
 
   @Transactional

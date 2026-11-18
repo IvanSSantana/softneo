@@ -1,4 +1,4 @@
-package com.softneo.erp.dto;
+package com.softneo.erp.dto.requests;
 
 import jakarta.validation.constraints.*;
 
