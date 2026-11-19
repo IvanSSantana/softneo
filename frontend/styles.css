@@ -37,7 +37,7 @@ body {
 }
 
 body > header {
-  min-height: 185px;
+  min-height: 100px;
   display: flex;
   align-items: center;
   padding: 18px 28px;
@@ -64,6 +64,7 @@ body > div {
 
 body > div > aside {
   min-width: 0;
+  max-width: 250px;
   padding: 12px;
   background: var(--ink);
 }
@@ -71,7 +72,7 @@ body > div > aside {
 body > div > aside nav ul {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -87,7 +88,8 @@ body > div > aside nav button {
   min-height: 86px;
   display: flex;
   align-items: center;
-  gap: 17px;
+  justify-content: center;
+  gap: 0;
   padding: 10px 18px;
   border: 2px solid transparent;
   border-radius: var(--radius-medium);
@@ -99,24 +101,6 @@ body > div > aside nav button {
   font-weight: 700;
   text-align: left;
   transition: background-color 140ms ease, transform 140ms ease;
-}
-
-body > div > aside nav button::before {
-  width: 88px;
-  flex: 0 0 88px;
-  color: #050505;
-  font-size: 3.5rem;
-  font-weight: 900;
-  line-height: 1;
-  text-align: center;
-}
-
-body > div > aside nav button[data-view-target="estoque"]::before {
-  content: "▣";
-}
-
-body > div > aside nav button[data-view-target="venda"]::before {
-  content: "◉";
 }
 
 body > div > aside nav button[aria-current="page"] {

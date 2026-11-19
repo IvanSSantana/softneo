@@ -113,6 +113,12 @@ public class TransacaoService {
       );
     }
 
+    if (transacao.quantidade() > produtoService.findById(transacao.produtoId()).quantidade()) {
+      throw new IllegalArgumentException(
+              "A quantidade não pode exceder a disponível em estoque."
+      );
+    }
+
   }
 
 }
