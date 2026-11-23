@@ -1,17 +1,27 @@
 package com.softneo.erp.repository;
 
 import com.softneo.erp.model.Transacao;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
 public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 
-  List<Transacao> findByProduto_Id(long produtoId);
+  @EntityGraph(attributePaths = {
+          "cliente",
+          "vendedor",
+          "itens",
+          "itens.produto"
+  })
+  List<Transacao> findAllByOrderByDataTransacaoDesc();
 
-  List<Transacao> findByCliente_Id(long clienteId);
-
-  List<Transacao> findByVendedor_Id(long vendedorId);
+  @EntityGraph(attributePaths = {
+          "cliente",
+          "vendedor",
+          "itens",
+          "itens.produto"
+  })
+  Optional<Transacao> findById(Long id);
 }

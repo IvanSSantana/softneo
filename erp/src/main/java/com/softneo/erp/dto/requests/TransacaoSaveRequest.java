@@ -1,28 +1,26 @@
 package com.softneo.erp.dto.requests;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public record TransacaoSaveRequest(
-        @NotNull(message = "O produto é obrigatório.")
-        Long produtoId,
-
-        @NotNull(message = "O cliente é obrigatório.")
-        Long clienteId,
-
-        @NotNull(message = "O vendedor é obrigatório.")
-        Long vendedorId,
 
         @NotNull(message = "O tipo da transação é obrigatório.")
         Boolean tipo,
 
-        @NotNull(message = "A quantidade é obrigatória.")
-        @Positive(message = "A quantidade deve ser maior que zero.")
-        Integer quantidade,
+        @NotNull(message = "O cliente é obrigatório.")
+        @Positive(message = "O ID do cliente deve ser positivo.")
+        Long clienteId,
 
-        @NotNull(message = "O preço unitário é obrigatório.")
-        @DecimalMin(value = "0.01", message = "O preço unitário deve ser maior que zero.")
-        @Digits(integer = 10, fraction = 2, message = "O preço unitário deve ter até 10 dígitos inteiros e 2 decimais.")
-        BigDecimal precoUnitario
+        @NotNull(message = "O vendedor é obrigatório.")
+        @Positive(message = "O ID do vendedor deve ser positivo.")
+        Long vendedorId,
+
+        @NotEmpty(message = "A transação deve possuir pelo menos um produto.")
+        List<@NotNull @Valid ItemTransacaoSaveRequest> itens
+
 ) {}

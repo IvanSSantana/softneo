@@ -1,20 +1,17 @@
 package com.softneo.erp.controller;
 
 import com.softneo.erp.dto.requests.TransacaoSaveRequest;
-import com.softneo.erp.model.Transacao;
+import com.softneo.erp.dto.responses.TransacaoResponse;
 import com.softneo.erp.service.TransacaoService;
 
 import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-})
 @RestController
 @RequestMapping("/api/v1/transacoes")
 public class TransacaoController {
@@ -26,42 +23,40 @@ public class TransacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Transacao>> findAll() {
-        List<Transacao> transacoes = transacaoService.findAll();
-        return ResponseEntity.ok(transacoes);
+    public ResponseEntity<List<TransacaoResponse>> findAll() {
+        return ResponseEntity.ok(transacaoService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Transacao> findById(@PathVariable long id) {
-        Transacao transacao = transacaoService.findById(id);
-        return ResponseEntity.ok(transacao);
+    public ResponseEntity<TransacaoResponse> findById(@PathVariable long id) {
+        return ResponseEntity.ok(transacaoService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Transacao> create(
-            @Valid @RequestBody TransacaoSaveRequest transacaoRequest
+    public ResponseEntity<TransacaoResponse> create(
+            @Valid @RequestBody TransacaoSaveRequest request
     ) {
-        Transacao novaTransacao = transacaoService.save(transacaoRequest);
+        TransacaoResponse response = transacaoService.save(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(novaTransacao);
+                .body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Transacao> update(
-            @PathVariable Long id,
-            @Valid  @RequestBody TransacaoSaveRequest transacaoRequest
+    public ResponseEntity<TransacaoResponse> update(
+            @PathVariable long id,
+            @Valid @RequestBody TransacaoSaveRequest request
     ) {
-        Transacao transacaoAtualizada =
-                transacaoService.update(id, transacaoRequest);
-
-        return ResponseEntity.ok(transacaoAtualizada);
+        return ResponseEntity.ok(
+                transacaoService.update(id, request)
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         transacaoService.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 }
