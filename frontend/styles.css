@@ -685,3 +685,183 @@ summary:focus-visible {
     width: 100%;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Ajustes dos elementos de identidade visual enviados com o HTML.
+   -------------------------------------------------------------------------- */
+body > header img {
+  display: block;
+  width: min(175px, 100%);
+  height: auto;
+}
+
+body > div > aside nav button {
+  justify-content: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+
+body > div > aside nav button img {
+  display: block;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  object-fit: contain;
+}
+
+/* --------------------------------------------------------------------------
+   Formulário de transação com múltiplos itens.
+   -------------------------------------------------------------------------- */
+#transacao-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transaction-header-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px 18px;
+}
+
+.transaction-header-fields > div,
+.transaction-item-inputs > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.transaction-items-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-medium);
+  background: #fff;
+}
+
+.transaction-items-fieldset legend {
+  padding: 0 8px;
+  font-weight: 800;
+}
+
+.transaction-item-inputs {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) minmax(110px, 0.7fr) minmax(150px, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.transaction-item-inputs button {
+  min-height: 43px;
+  white-space: nowrap;
+}
+
+.transaction-items-table {
+  min-width: 700px;
+}
+
+#itens-transacao-tbody td input {
+  width: min(150px, 100%);
+  min-width: 90px;
+}
+
+#itens-transacao-tbody td:first-child {
+  min-width: 180px;
+}
+
+#transacao-total {
+  width: 100%;
+  margin: 0;
+}
+
+.transaction-form-actions,
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+#produto-form .form-actions {
+  grid-column: 1 / -1;
+}
+
+.transaction-form-actions button,
+.form-actions button {
+  justify-self: auto;
+}
+
+.transaction-form-actions #btn-cancelar-transacao,
+.form-actions button[id^="btn-cancelar-"] {
+  background: #e3e3e3;
+}
+
+#transacoes-tbody td:nth-child(5) {
+  min-width: 220px;
+}
+
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#view-venda details .table-scroll {
+  margin: 14px;
+}
+
+#view-venda details .table-scroll table {
+  width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 1000px) {
+  .transaction-item-inputs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .transaction-item-inputs button {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 900px) {
+  .transaction-header-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body > div > aside nav button img {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+}
+
+@media (max-width: 620px) {
+  .transaction-header-fields,
+  .transaction-item-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-items-fieldset {
+    padding: 12px;
+  }
+
+  .transaction-item-inputs button {
+    width: 100%;
+  }
+
+  .transaction-form-actions button,
+  .form-actions button {
+    flex: 1 1 auto;
+  }
+
+  body > div > aside nav button img {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+}
+
