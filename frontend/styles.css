@@ -878,15 +878,15 @@ body > div > aside nav button img {
   flex: 0 0 54px;
 }
 
-#view-fluxo {
+#view-indicadores {
   min-width: 0;
 }
 
-#view-fluxo .cash-flow-filters {
+#view-indicadores .cash-flow-filters {
   margin: 0;
 }
 
-#view-fluxo > .indicator-page-header {
+#view-indicadores > .indicator-page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;

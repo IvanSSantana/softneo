@@ -6,8 +6,7 @@
   <meta name="description" content="Interface do mini ERP SoftNeo para gerenciamento de estoque e vendas.">
   <link rel="stylesheet" href="./styles.css">
   <title>SoftNeo ERP</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.6.2/dist/chart.umd.min.js" defer></script>
-  <script type="module" src="./app.js" defer></script>
+  <script type="module" src="./js/app.js"></script>
 </head>
 <body>
   <header>
@@ -42,14 +41,14 @@
           <li>
             <button
               type="button"
-              data-view-target="fluxo"
-              aria-controls="view-fluxo"
+              data-view-target="indicadores"
+              aria-controls="view-indicadores"
             >
               <svg class="navigation-icon" width="54" height="54" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                 <path d="M4 19V5M4 19H21M7 15L11 11L14 13L20 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M16 7H20V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              Fluxo
+              Indicadores
             </button>
           </li>
         </ul>
@@ -57,10 +56,10 @@
     </aside>
 
     <main id="conteudo-principal">
-      <section id="view-fluxo" aria-labelledby="titulo-fluxo" hidden>
+      <section id="view-indicadores" aria-labelledby="titulo-indicadores" hidden>
         <header class="indicator-page-header">
           <div>
-            <h2 id="titulo-fluxo">Fluxo comerciais</h2>
+            <h2 id="titulo-indicadores">Indicadores comerciais</h2>
             <p>Acompanhe as entradas, saídas e o saldo das movimentações.</p>
           </div>
         </header>
