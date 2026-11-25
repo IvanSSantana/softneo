@@ -6,7 +6,8 @@ const state = {
   clients: [],
   sellers: [],
   transactions: [],
-  draftItems: []
+  draftItems: [],
+  cashFlowChart: null
 };
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -180,6 +181,14 @@ function setupNavigation() {
           navigationButton.removeAttribute("aria-current");
         }
       });
+
+      // O gráfico é carregado quando a área fica visível para o Chart.js
+      // calcular corretamente as dimensões do canvas.
+      if (button.dataset.viewTarget === "fluxo") {
+        loadCashFlow();
+      } else if (state.cashFlowChart) {
+        state.cashFlowChart.resize();
+      }
     });
   });
 }
@@ -614,7 +623,7 @@ function addDraftItem() {
     state.draftItems.push({
       produtoId: product.id,
       produtoNome: product.nome,
-      quantidade: quantity,
+      quantidade,
       precoUnitario: unitPrice
     });
     showStatus("transacao-status", "Produto adicionado à transação.");
@@ -712,7 +721,8 @@ async function submitTransactionForm(event) {
 
     const refreshResults = await Promise.allSettled([
       loadTransactions(),
-      loadProducts()
+      loadProducts(),
+      refreshCashFlowIfVisible()
     ]);
 
     const refreshFailed = refreshResults.some((result) => result.status === "rejected");
@@ -800,12 +810,299 @@ async function handleTransactionTableClick(event) {
 
     try {
       await apiRequest(`/transacoes/${id}`, { method: "DELETE" });
-      await Promise.all([loadTransactions(), loadProducts()]);
+      await Promise.all([
+        loadTransactions(),
+        loadProducts(),
+        refreshCashFlowIfVisible()
+      ]);
       showStatus("transacao-status", "Transação excluída e estoque atualizado com sucesso.");
     } catch (error) {
       showStatus("transacao-status", error.message);
     }
   }
+}
+
+// -----------------------------------------------------------------------------
+// Indicadores: fluxo de caixa consumido pela rota /indicadores/fluxo-caixa.
+// -----------------------------------------------------------------------------
+const compactCurrencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+  notation: "compact",
+  maximumFractionDigits: 1
+});
+
+function getTodayForDateInput() {
+  // O input date espera YYYY-MM-DD. Montamos a data local sem convertê-la
+  // para UTC, evitando que o dia mude por causa do fuso horário do navegador.
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateOnly(value) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeZone: "America/Sao_Paulo"
+  }).format(date);
+}
+
+function formatCashFlowPeriod(periodo) {
+  const names = {
+    SEMANA: "Semana",
+    MES: "Mês",
+    ANO: "Ano"
+  };
+
+  return names[periodo] ?? periodo;
+}
+
+function getCashFlowPointLabel(point, periodo) {
+  // Compatibilidade com a versão anterior do DTO (rotulo).
+  if (point.textoExibicao) return point.textoExibicao;
+  if (point.rotulo) return point.rotulo;
+
+  if (!point.data) return "—";
+
+  const date = new Date(point.data);
+  if (Number.isNaN(date.getTime())) return String(point.data);
+
+  const formatOptions = periodo === "ANO"
+    ? { month: "short", timeZone: "America/Sao_Paulo" }
+    : periodo === "MES"
+      ? { day: "2-digit", timeZone: "America/Sao_Paulo" }
+      : { weekday: "short", timeZone: "America/Sao_Paulo" };
+
+  return new Intl.DateTimeFormat("pt-BR", formatOptions)
+    .format(date)
+    .replace(".", "")
+    .toUpperCase();
+}
+
+function renderCashFlowTotals(response) {
+  const totalEntradas = Number(response.totalEntradas ?? 0);
+  const totalSaidas = Number(response.totalSaidas ?? 0);
+  const saldo = Number(response.saldo ?? totalEntradas - totalSaidas);
+
+  document.getElementById("fluxo-total-entradas").textContent = formatCurrency(totalEntradas);
+  document.getElementById("fluxo-total-saidas").textContent = formatCurrency(totalSaidas);
+
+  const saldoElement = document.getElementById("fluxo-saldo");
+  saldoElement.textContent = formatCurrency(saldo);
+  saldoElement.classList.toggle("is-negative", saldo < 0);
+  saldoElement.classList.toggle("is-positive", saldo > 0);
+
+  document.getElementById("fluxo-periodo-descricao").textContent =
+    `${formatCashFlowPeriod(response.periodo)}: ${formatDateOnly(response.inicio)} até ${formatDateOnly(response.fim)}`;
+}
+
+function createCashFlowChart(response) {
+  const canvas = document.getElementById("fluxo-caixa-chart");
+  const context = canvas.getContext("2d");
+  const points = response.pontos ?? [];
+
+  const labels = points.map((point) =>
+    getCashFlowPointLabel(point, response.periodo)
+  );
+
+  const entries = points.map((point) => Number(point.entradas ?? 0));
+  const outflows = points.map((point) => Number(point.saidas ?? 0));
+  const balance = points.map((point) => Number(point.saldo ?? 0));
+
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        type: "bar",
+        label: "Entradas",
+        data: entries,
+        backgroundColor: "rgba(255, 160, 30, 0.82)",
+        borderColor: "#c77b08",
+        borderWidth: 1,
+        borderRadius: 6,
+        maxBarThickness: 28,
+        order: 2
+      },
+      {
+        type: "bar",
+        label: "Saídas",
+        data: outflows,
+        backgroundColor: "rgba(24, 24, 24, 0.76)",
+        borderColor: "#181818",
+        borderWidth: 1,
+        borderRadius: 6,
+        maxBarThickness: 28,
+        order: 2
+      },
+      {
+        type: "line",
+        label: "Saldo",
+        data: balance,
+        borderColor: "#c77b08",
+        backgroundColor: "#c77b08",
+        borderWidth: 2.5,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        pointBackgroundColor: "#ffa01e",
+        pointBorderColor: "#181818",
+        pointBorderWidth: 1,
+        tension: 0.25,
+        fill: false,
+        order: 1
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: "index",
+      intersect: false
+    },
+    layout: {
+      padding: { top: 8, right: 10, bottom: 0, left: 4 }
+    },
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          usePointStyle: true,
+          pointStyle: "circle",
+          boxWidth: 9,
+          boxHeight: 9,
+          padding: 20,
+          color: "#181818",
+          font: {
+            family: "Arial, Helvetica, sans-serif",
+            size: 12,
+            weight: "700"
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: "#181818",
+        titleColor: "#ffffff",
+        bodyColor: "#ffffff",
+        borderColor: "#ffa01e",
+        borderWidth: 1,
+        padding: 12,
+        displayColors: true,
+        callbacks: {
+          label(context) {
+            return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        border: { display: false },
+        ticks: {
+          color: "#555555",
+          maxRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: response.periodo === "MES" ? 16 : 12,
+          font: { family: "Arial, Helvetica, sans-serif", size: 11 }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        border: { display: false },
+        grid: {
+          color: "rgba(24, 24, 24, 0.10)",
+          tickBorderDash: [3, 3]
+        },
+        ticks: {
+          color: "#555555",
+          callback(value) {
+            return compactCurrencyFormatter.format(value);
+          },
+          font: { family: "Arial, Helvetica, sans-serif", size: 11 }
+        }
+      }
+    }
+  };
+
+  if (!window.Chart) {
+    throw new Error("Não foi possível carregar a biblioteca Chart.js. Verifique sua conexão com a internet.");
+  }
+
+  if (state.cashFlowChart) {
+    state.cashFlowChart.data = chartData;
+    state.cashFlowChart.options = chartOptions;
+    state.cashFlowChart.update();
+    return;
+  }
+
+  state.cashFlowChart = new Chart(context, {
+    type: "bar",
+    data: chartData,
+    options: chartOptions
+  });
+}
+
+async function loadCashFlow() {
+  const periodInput = document.getElementById("fluxo-periodo");
+  const dateInput = document.getElementById("fluxo-data-referencia");
+  const updateButton = document.getElementById("btn-atualizar-fluxo");
+  const referenceDate = dateInput.value;
+
+  if (!referenceDate) {
+    showStatus("fluxo-status", "Selecione uma data de referência.");
+    return;
+  }
+
+  // A API recebe Instant. Enviamos o meio-dia UTC da data escolhida para
+  // que ela permaneça no mesmo dia quando convertida para America/Sao_Paulo.
+  const dataReferencia = `${referenceDate}T12:00:00Z`;
+  const params = new URLSearchParams({
+    periodo: periodInput.value,
+    dataReferencia
+  });
+
+  updateButton.disabled = true;
+  updateButton.textContent = "Carregando...";
+  showStatus("fluxo-status", "Consultando movimentações...");
+
+  try {
+    const response = await apiRequest(`/indicadores/fluxo-caixa?${params.toString()}`);
+
+    renderCashFlowTotals(response);
+    createCashFlowChart(response);
+    showStatus("fluxo-status", "Fluxo de caixa atualizado.");
+  } catch (error) {
+    showStatus("fluxo-status", error.message);
+  } finally {
+    updateButton.disabled = false;
+    updateButton.textContent = "Atualizar gráfico";
+  }
+}
+
+async function refreshCashFlowIfVisible() {
+  const indicatorsView = document.getElementById("view-fluxo");
+  if (indicatorsView && !indicatorsView.hidden) {
+    await loadCashFlow();
+  }
+}
+
+function setupCashFlow() {
+  const dateInput = document.getElementById("fluxo-data-referencia");
+  dateInput.value = getTodayForDateInput();
+
+  document.getElementById("fluxo-filtros-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    loadCashFlow();
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -845,6 +1142,7 @@ function setupEventListeners() {
 async function initialize() {
   setupNavigation();
   setupEventListeners();
+  setupCashFlow();
   renderDraftItems();
 
   const results = await Promise.allSettled([

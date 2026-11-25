@@ -6,6 +6,7 @@
   <meta name="description" content="Interface do mini ERP SoftNeo para gerenciamento de estoque e vendas.">
   <link rel="stylesheet" href="./styles.css">
   <title>SoftNeo ERP</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.6.2/dist/chart.umd.min.js" defer></script>
   <script type="module" src="./app.js" defer></script>
 </head>
 <body>
@@ -38,11 +39,89 @@
               Venda
             </button>
           </li>
+          <li>
+            <button
+              type="button"
+              data-view-target="fluxo"
+              aria-controls="view-fluxo"
+            >
+              <svg class="navigation-icon" width="54" height="54" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path d="M4 19V5M4 19H21M7 15L11 11L14 13L20 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 7H20V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Fluxo
+            </button>
+          </li>
         </ul>
       </nav>
     </aside>
 
     <main id="conteudo-principal">
+      <section id="view-fluxo" aria-labelledby="titulo-fluxo" hidden>
+        <header class="indicator-page-header">
+          <div>
+            <h2 id="titulo-fluxo">Fluxo comerciais</h2>
+            <p>Acompanhe as entradas, saídas e o saldo das movimentações.</p>
+          </div>
+        </header>
+
+        <section class="cash-flow-panel" aria-labelledby="titulo-fluxo-caixa">
+          <div class="cash-flow-panel-header">
+            <div>
+              <h3 id="titulo-fluxo-caixa">Fluxo de caixa</h3>
+              <p id="fluxo-periodo-descricao">Selecione um período para consultar as movimentações.</p>
+            </div>
+
+            <form id="fluxo-filtros-form" class="cash-flow-filters">
+              <div>
+                <label for="fluxo-periodo">Visualização</label>
+                <select id="fluxo-periodo" name="periodo">
+                  <option value="SEMANA">Semana</option>
+                  <option value="MES" selected>Mês</option>
+                  <option value="ANO">Ano</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="fluxo-data-referencia">Data de referência</label>
+                <input type="date" id="fluxo-data-referencia" name="dataReferencia" required>
+              </div>
+
+              <button type="submit" id="btn-atualizar-fluxo">Atualizar gráfico</button>
+            </form>
+          </div>
+
+          <div class="cash-flow-summary" aria-live="polite">
+            <article class="cash-flow-total cash-flow-total--entries">
+              <span class="cash-flow-total-label">Entradas</span>
+              <strong id="fluxo-total-entradas">R$ 0,00</strong>
+              <span>Vendas registradas no período</span>
+            </article>
+
+            <article class="cash-flow-total cash-flow-total--outflows">
+              <span class="cash-flow-total-label">Saídas</span>
+              <strong id="fluxo-total-saidas">R$ 0,00</strong>
+              <span>Compras registradas no período</span>
+            </article>
+
+            <article class="cash-flow-total cash-flow-total--balance">
+              <span class="cash-flow-total-label">Saldo do período</span>
+              <strong id="fluxo-saldo">R$ 0,00</strong>
+              <span>Entradas menos saídas</span>
+            </article>
+          </div>
+
+          <div class="cash-flow-chart-container">
+            <canvas
+              id="fluxo-caixa-chart"
+              role="img"
+              aria-label="Gráfico de fluxo de caixa com entradas, saídas e saldo por período"
+            ></canvas>
+          </div>
+
+          <p id="fluxo-status" class="cash-flow-status" role="status" aria-live="polite"></p>
+        </section>
+      </section>
       <section id="view-estoque" aria-labelledby="titulo-estoque">
         <header>
           <h2 id="titulo-estoque">Estoque</h2>
@@ -119,7 +198,7 @@
         <p id="produto-status" role="status" aria-live="polite"></p>
 
         <div class="table-scroll">
-          <caption>Produtos cadastrados no estoque</caption>
+          <p class="table-caption">Produtos cadastrados no estoque</p>
           
           <table>
             <thead>
@@ -216,7 +295,7 @@
               </div>
 
               <div class="table-scroll">
-                <caption>Itens que serão incluídos na transação</caption>
+                <p class="table-caption">Itens que serão incluídos na transação</p>
 
                 <table class="transaction-items-table">
                   <thead>
@@ -249,7 +328,7 @@
         <section aria-labelledby="titulo-transacoes">
           <h3 id="titulo-transacoes">Transações cadastradas</h3>
           <div class="table-scroll">
-            <caption>Histórico de compras e vendas</caption>
+            <p class="table-caption">Histórico de compras e vendas</p>
 
             <table>
               <thead>
@@ -288,7 +367,7 @@
             <p id="cliente-status" role="status" aria-live="polite"></p>
 
             <div class="table-scroll">
-              <caption>Clientes cadastrados</caption>
+              <p class="table-caption">Clientes cadastrados</p>
 
               <table>
                 <thead>
@@ -319,7 +398,7 @@
             <p id="vendedor-status" role="status" aria-live="polite"></p>
 
             <div class="table-scroll">
-              <caption>Vendedores cadastrados</caption>
+              <p class="table-caption">Vendedores cadastrados</p>
 
               <table>
                 <thead>
