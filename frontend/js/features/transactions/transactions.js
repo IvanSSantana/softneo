@@ -133,7 +133,7 @@ function addDraftItem() {
     state.draftItems.push({
       produtoId: product.id,
       produtoNome: product.nome,
-      quantidade,
+      quantidade: quantity,
       precoUnitario: unitPrice
     });
     showStatus("transacao-status", "Produto adicionado à transação.");

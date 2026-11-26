@@ -67,4 +67,10 @@ public class Transacao {
 
     itens.clear();
   }
+
+  public void removeItem(ItemTransacao item) {
+    if (itens.remove(item)) {
+      item.setTransacao(null);
+    }
+  }
 }

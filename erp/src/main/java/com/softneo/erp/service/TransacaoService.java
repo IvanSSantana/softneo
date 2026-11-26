@@ -98,89 +98,105 @@ public class TransacaoService {
     return toResponse(transacaoDb);
   }
 
-  @Transactional
-  public TransacaoResponse update(
-          long id,
-          TransacaoSaveRequest request
-  ) {
+    @Transactional
+    public TransacaoResponse update(
+            long id,
+            TransacaoSaveRequest request
+    ) {
 
-    Transacao transacaoDb = findEntityById(id);
+      Transacao transacaoDb = findEntityById(id);
 
-    Map<Long, Produto> produtos = loadProductsFromDb(request.itens());
+      Map<Long, Produto> produtos = loadProductsFromDb(request.itens());
 
-    for (ItemTransacao itemAntigo : transacaoDb.getItens()) {
+      for (ItemTransacao itemAntigo : transacaoDb.getItens()) {
 
-      Produto produto = itemAntigo.getProduto();
+        Produto produto = itemAntigo.getProduto();
 
-      produtos.putIfAbsent(produto.getId(), produto);
-    }
+        produtos.putIfAbsent(produto.getId(), produto);
+      }
 
-    Map<Long, Integer> inventoryImpacts = new HashMap<>();
+      Map<Long, Integer> inventoryImpacts = new HashMap<>();
 
-    for (ItemTransacao itemAntigo : transacaoDb.getItens()) {
+      for (ItemTransacao itemAntigo : transacaoDb.getItens()) {
 
-      Long produtoId = itemAntigo.getProduto().getId();
+        Long produtoId = itemAntigo.getProduto().getId();
 
-      int impactoAnterior = calculateInventoryImpact(
-              transacaoDb.getTipo(),
-              itemAntigo.getQuantidade()
+        int impactoAnterior = calculateInventoryImpact(
+                transacaoDb.getTipo(),
+                itemAntigo.getQuantidade()
+        );
+
+        addInventoryImpact(
+                inventoryImpacts,
+                produtoId,
+                -impactoAnterior
+        );
+      }
+
+      for (ItemTransacaoSaveRequest itemNovo : request.itens()) {
+
+        int impactoNovo = calculateInventoryImpact(
+                request.tipo(),
+                itemNovo.quantidade()
+        );
+
+        addInventoryImpact(
+                inventoryImpacts,
+                itemNovo.produtoId(),
+                impactoNovo
+        );
+      }
+
+      for (Map.Entry<Long, Integer> impacts : inventoryImpacts.entrySet()) {
+
+        Produto produto = produtos.get(impacts.getKey());
+
+        updateInventory(produto, impacts.getValue());
+      }
+
+      transacaoDb.setCliente(
+              clienteService.findById(request.clienteId())
       );
 
-      addInventoryImpact(
-              inventoryImpacts,
-              produtoId,
-              -impactoAnterior
-      );
-    }
-
-    for (ItemTransacaoSaveRequest itemNovo : request.itens()) {
-
-      int impactoNovo = calculateInventoryImpact(
-              request.tipo(),
-              itemNovo.quantidade()
+      transacaoDb.setVendedor(
+              vendedorService.findById(request.vendedorId())
       );
 
-      addInventoryImpact(
-              inventoryImpacts,
-              itemNovo.produtoId(),
-              impactoNovo
-      );
+      transacaoDb.setTipo(request.tipo());
+
+      Map<Long, ItemTransacao> itensExistentes = new HashMap<>();
+
+      for (ItemTransacao item : transacaoDb.getItens()) {
+        Long produtoId = item.getProduto().getId();
+        itensExistentes.put(produtoId, item);
+      }
+
+      for (ItemTransacaoSaveRequest itemRequest : request.itens()) {
+        Long produtoId = itemRequest.produtoId();
+        ItemTransacao itemExistente = itensExistentes.remove(produtoId);
+
+        if (itemExistente != null) {
+          itemExistente.setQuantidade(itemRequest.quantidade());
+          itemExistente.setPrecoUnitario(itemRequest.precoUnitario());
+        } else {
+          Produto produto = produtos.get(produtoId);
+
+          transacaoDb.addItem(
+                  new ItemTransacao(
+                          produto,
+                          itemRequest.quantidade(),
+                          itemRequest.precoUnitario()
+                  )
+          );
+        }
+      }
+
+      for (ItemTransacao itemRemovido : itensExistentes.values()) {
+        transacaoDb.removeItem(itemRemovido);
+      }
+
+      return toResponse(transacaoRepository.save(transacaoDb));
     }
-
-    for (Map.Entry<Long, Integer> impacts : inventoryImpacts.entrySet()) {
-
-      Produto produto = produtos.get(impacts.getKey());
-
-      updateInventory(produto, impacts.getValue());
-    }
-
-    transacaoDb.setCliente(
-            clienteService.findById(request.clienteId())
-    );
-
-    transacaoDb.setVendedor(
-            vendedorService.findById(request.vendedorId())
-    );
-
-    transacaoDb.setTipo(request.tipo());
-
-    transacaoDb.clearItens();
-
-    for (ItemTransacaoSaveRequest itemRequest : request.itens()) {
-
-      Produto produto = produtos.get(itemRequest.produtoId());
-
-      transacaoDb.addItem(
-              new ItemTransacao(
-                      produto,
-                      itemRequest.quantidade(),
-                      itemRequest.precoUnitario()
-              )
-      );
-    }
-
-    return toResponse(transacaoRepository.save(transacaoDb));
-  }
 
   @Transactional
   public void delete(long id) {
